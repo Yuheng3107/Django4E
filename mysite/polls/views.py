@@ -5,6 +5,7 @@ from django.views import generic
 
 from .models import Choice, Question
 class IndexView(generic.ListView):
+    model = Question
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
 
@@ -31,4 +32,4 @@ def vote(request, question_id):
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 def owner(request):
-    return HttpResponse("Hello, world. 6964e9d5 is the polls index.")
+    return HttpResponse("Hello, world. 5b32eb1a is the polls index.")
