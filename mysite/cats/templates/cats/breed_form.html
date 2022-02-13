@@ -1,0 +1,12 @@
+{% extends "base_bootstrap.html" %}
+{% block content %}
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <p>Enter an item </p>
+    <input type="submit" value="Submit">
+    <input type="submit" onclick="window.location='{% url 'cats:cat_list' %}'; return false;" value="Cancel">
+  </form>
+  {% endblock %}
