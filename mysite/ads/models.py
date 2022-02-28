@@ -12,7 +12,7 @@ class Ad(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # Shows up in admin list
+    picture = models.BinaryField(null=True, editable=True)
+    content_type = models.CharField(max_length=256, null=True, help_text='The MIMEType of the file') 
     def __str__(self):
         return self.title
-    # Create your models here.
