@@ -10,6 +10,16 @@ from django.http import HttpResponse
 class AdListView(OwnerListView):
     model = Ad
 
+    def get(self, request):
+        template_name = 'ads/ad_list.html'
+        ad_list = Ad.objects.all()
+        favorites = list()
+        if request.user.is_authenticated:
+            # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
+            rows = request.user.favorite_things.values('id')
+            favorites = [rows['id'] for row in rows]
+        ctx = {'ad_list': ad_list, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
 class AdDetailView(OwnerDetailView):
     model = Ad
     template_name = "ads/ad_detail.html"
