@@ -1,6 +1,18 @@
 {% extends "base_menu.html" %}
 {% block content %}
 <h1>Ads 1.0</h1>
+<script>
+function favPost(url, thing_id) {
+    console.log('Requesting JSON');
+    $.post(url, {},  function(rowz){
+        console.log(url, 'finished');
+        $("#unfavorite_star_"+thing_id).toggle();
+        $("#favorite_star_"+thing_id).toggle();
+    }).fail(function(xhr) {
+        alert('Url failed with '+xhr.status+' '+url);
+    });
+}
+</script>
 <p>
 {% if ad_list %}
 <ul>
@@ -38,17 +50,4 @@
 {% else %}
   <p>There are no ads in the database.</p>
 {% endif %}
-    <script>
-        function favPost(url, ad_id) {
-            console.log('Requesting JSON');
-            $.post(url, {}, function(rowz) {
-                console.log(url, 'finished');
-                $("#unfavorite_star_"+ad_id).toggle();
-                $("favorite_star_"+ad_id).toggle();
-            }.fail(function(xhr) {
-                alert('Url failed with '+ xhr.status+ ' '+url);
-            });
-        }
-    </script>
-
 {% endblock %}
