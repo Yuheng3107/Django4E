@@ -6,18 +6,28 @@ from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from ads.forms import CreateForm, CommentForm
 from django.http import HttpResponse
+from django.db.models import Q
+from django.contrib.humanize.templatetags.humanize import naturaltime
 # Create your views here.
 class AdListView(OwnerListView):
     model = Ad
     template_name = 'ads/ad_list.html'
     def get(self, request):
-        ad_list = Ad.objects.all()
         favorites = list()
         if request.user.is_authenticated:
             # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
             rows = request.user.favorite_ads.values('id')
             favorites = [row['id'] for row in rows]
-        ctx = {'ad_list': ad_list, 'favorites': favorites}
+        strval = request.GET.get("search", False)
+        if strval:
+            query = Q(title__icontains=strval)
+            query.add(Q(text__icontains=strval), Q.OR)
+            ad_list = Ad.objects.filter(query).select_related().order_by('-updated_at')[:10]
+        else:
+            ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+        for ad in ad_list:
+            ad.natural_updated = naturaltime(ad.updated_at)
+        ctx = {'ad_list': ad_list, 'favorites': favorites, 'search': strval}
         return render(request, self.template_name, ctx)
 class AdDetailView(OwnerDetailView):
     model = Ad
@@ -48,6 +58,7 @@ class AdCreateView(LoginRequiredMixin, View):
         ad = form.save(commit=False)
         ad.owner = self.request.user
         ad.save()
+        form.save_m2m()
         return redirect(self.success_url)
 
 class AdUpdateView(LoginRequiredMixin, View):

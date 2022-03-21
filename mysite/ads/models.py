@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.conf import settings
+from taggit.managers import TaggableManager
 
 class Ad(models.Model):
     title = models.CharField(
@@ -18,6 +19,7 @@ class Ad(models.Model):
     content_type = models.CharField(max_length=256, null=True, help_text='The MIMEType of the file') 
     # Favourites
     favorites =  models.ManyToManyField(settings.AUTH_USER_MODEL, through='Fav', related_name='favorite_ads')
+    tags = TaggableManager(blank=True)
     def __str__(self):
         return self.title
 
